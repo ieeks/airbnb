@@ -173,15 +173,19 @@
     document.title = translations[lang] ? map.__title__ : enTitle;
     buttons.forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-lang') === lang); });
     try { localStorage.setItem('guideLang', lang); } catch (e) {}
+    try { history.replaceState(null, '', location.pathname + (lang === 'en' ? '' : '?lang=' + lang)); } catch (e) {}
   }
 
   buttons.forEach(function (b) {
     b.addEventListener('click', function () { apply(b.getAttribute('data-lang')); });
   });
 
+  var fromUrl = null;
+  try { fromUrl = new URLSearchParams(location.search).get('lang'); } catch (e) {}
   var saved = null;
   try { saved = localStorage.getItem('guideLang'); } catch (e) {}
-  if (saved && translations[saved]) { apply(saved); }
+  if (fromUrl === 'en' || translations[fromUrl]) { apply(fromUrl); }
+  else if (saved && translations[saved]) { apply(saved); }
 })();
 </script>
 
